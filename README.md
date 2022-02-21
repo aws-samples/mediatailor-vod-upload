@@ -24,11 +24,11 @@ Important: this application uses various AWS services and there are costs associ
 
 1. Create a new directory, navigate to that directory in a terminal and clone the GitHub repository:
     ```
-    git clone https://github.com/aws-samples/MediaTailor-VOD-Upload.git
+    git clone git@github.com:aws-samples/mediatailor-vod-upload.git
     ```
 1. Change directory to the directory:
     ```
-    cd MediaTailor-VOD-Upload
+    cd mediatailor-vod-upload
     ```
 1. From the command line, use AWS SAM to build and deploy the AWS resources for the pattern as specified in the template.yml file:
     ```
