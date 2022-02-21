@@ -1,0 +1,231 @@
+Transform: AWS::Serverless-2016-10-31
+Description: MediaTailor VOD Source bulk upload - S3 Eventbridge Step Function Lambda
+
+Parameters: 
+    SNSEndpoint: 
+      Description: Email address to send notifications
+      Type: String
+
+Resources: 
+    SourceBucket: 
+      Type: AWS::S3::Bucket
+      Properties: 
+        NotificationConfiguration: 
+          EventBridgeConfiguration: 
+            EventBridgeEnabled: true       
+    
+    ImportFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: src/
+        Handler: csv2json.lambda_handler
+        Runtime: python3.7
+        MemorySize: 128
+        Role: {
+          "Fn::GetAtt": [
+            "ImportFunctionRole",
+            "Arn"
+          ]
+        }
+
+    StateMachineCABulkUpload:
+      Type: AWS::Serverless::StateMachine
+      Properties:
+        DefinitionUri: statemachine/CABulkUpload.asl.json
+        Tracing:
+          Enabled: true
+        Events:
+          S3trigger:
+            Type: EventBridgeRule
+            Properties:
+              EventBusName: default
+              Pattern:
+                {
+                  "detail": {
+                    "bucket": {
+                      "name": [!Ref SourceBucket]
+                    }
+                  }
+                }
+        Logging:
+          Level: ERROR
+          Destinations:
+           - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt CloudWatchLogsLogGroup.Arn
+        Role: {
+            "Fn::GetAtt": [
+              "StatesExecutionRole",
+              "Arn"
+            ]
+          }
+
+    
+    ImportFunctionRole: {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        ],
+        "Policies": [
+          {
+            "PolicyName": "ImportFunctionRolePolicy0",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": [
+                        "arn:${AWS::Partition}:s3:::${bucketName}",
+                        {
+                          "bucketName": {
+                            "Ref": "SourceBucket"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "Fn::Sub": [
+                        "arn:${AWS::Partition}:s3:::${bucketName}/*",
+                        {
+                          "bucketName": {
+                            "Ref": "SourceBucket"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+
+    StatesExecutionRole: {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  {
+                    "Fn::Sub": "states.${AWS::Region}.amazonaws.com"
+                  }
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "SNSAccess",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": [
+                    "*"
+                  ],
+                  "Action": [
+                    "sns:Publish",
+                    "sns:Subscribe"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "LambdaExecute",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "lambda:InvokeFunction"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "MediaTailorAccess",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "mediatailor:*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "Cloudwatch",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "cloudwatch:*",
+                    "logs:*",
+                    "xray:*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+    
+    CloudWatchLogsLogGroup:
+      Type: AWS::Logs::LogGroup
+
+    StateMachineSNSTopic: 
+      Type: AWS::SNS::Topic
+
+    
+
+Outputs:
+
+    SourceBucketName:
+        Description: S3 Bucket to upload CSV file
+        Value: !Ref SourceBucket
+    StepFunction:
+        Description: StateMachineCABulkUpload ARN
+        Value: !Ref StateMachineCABulkUpload
+      
+
+

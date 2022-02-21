@@ -1,0 +1,3 @@
+SourceLocation,VodSourceName,SourceGroup,Type,Path
+WorkshopTest,skateboarding-auto,source-group-hls,HLS,/hls/skateboarding.m3u8
+WorkshopTest,stags-auto,source-group-hls,HLS,/hls/stags.m3u8

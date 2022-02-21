@@ -1,0 +1,5 @@
+SourceLocation,VodSourceName,SourceGroup,Type,Path
+MySourceLocation1,MyFirstVodSource,hls,HLS,/path/to/my/first/source.m3u8
+MySourceLocation1,MyFirstVodSource,dash,DASH,/path/to/my/first/source.mpd
+MySourceLocation1,MySecondVodSource,hls,HLS,/path/to/my/second/source.m3u8
+MySourceLocation1,MySecondVodSource,dash,DASH,/path/to/my/second/source.mpd
