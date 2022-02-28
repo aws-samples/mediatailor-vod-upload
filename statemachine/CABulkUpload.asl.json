@@ -7,7 +7,7 @@
       "Resource": "arn:aws:states:::lambda:invoke",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "arn:aws:lambda:ap-southeast-2:478233522243:function:CABulkUpload-CSVtoJSON"
+        "FunctionName": "CABulkUpload-CSVtoJSON"
       },
       "Retry": [
         {
@@ -27,7 +27,7 @@
     },
     "Map": {
       "Type": "Map",
-      "Next": "SNS Publish",
+      "Next": "Success",
       "Iterator": {
         "StartAt": "CreateVodSource",
         "States": {
@@ -57,15 +57,6 @@
       "ItemsPath": "$",
       "ResultPath": "$",
       "MaxConcurrency": 10
-    },
-    "SNS Publish": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::aws-sdk:sns:publish",
-      "Parameters": {
-        "Message.$": "$",
-        "TopicArn": "arn:aws:sns:ap-southeast-2:478233522243:SNS-CABulkUpload-Success"
-      },
-      "Next": "Success"
     },
     "Success": {
       "Type": "Succeed"

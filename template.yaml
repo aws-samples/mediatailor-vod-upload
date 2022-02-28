@@ -153,6 +153,7 @@ Resources:
                     "*"
                   ],
                   "Action": [
+                    "sns:CreateTopic",
                     "sns:Publish",
                     "sns:Subscribe"
                   ]
