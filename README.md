@@ -4,7 +4,11 @@
 
 The AWS Serverless Application Model ([SAM](https://aws.amazon.com/serverless/sam/)) template deploys an [Amazon S3](https://aws.amazon.com/s3/) bucket that publishes events to [Amazon EventBridge](https://aws.amazon.com/eventbridge/) which triggers an [AWS Step Function](https://aws.amazon.com/step-functions). This includes an [AWS Lambda](https://aws.amazon.com/lambda/) function with Python code that converts CSV to JSON. Template includes the [AWS IAM](https://aws.amazon.com/iam/) policies required to run the application, but is not ready for production workloads.
 
+To learn about AWS MediaTailor Channel Assembly, this [workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/caf0d459-d860-414e-8216-bf136b2b789b/en-US/) walks through defining sources, creating a channel and programs along with test source content. 
+
 Important: this application uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the [AWS Pricing page](https://aws.amazon.com/pricing/) for details. You are responsible for any AWS costs incurred. No warranty is implied in this example.
+
+
 
 ## Architecture
 
@@ -62,6 +66,8 @@ Important: this application uses various AWS services and there are costs associ
 1. Note the outputs from the SAM deployment process. These contain the S3 bucket to upload CSV file to and the Step Function to monitor workflow. 
 
 ## How it works
+
+Note if you are following the AWS MediaTailor [workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/caf0d459-d860-414e-8216-bf136b2b789b/en-US/) - you can use `workshop.csv` to test, after first creating source location `WorkshopTest` = ` https://channelassembly.videocloud.live`
 
 * Upload a CSV file to the created S3 bucket.
 * The Step Function is invoked with the event from S3, routed via EventBridge
