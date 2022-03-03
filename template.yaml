@@ -30,8 +30,12 @@ Resources:
 
     StateMachineCABulkUpload:
       Type: AWS::Serverless::StateMachine
+      DependsOn: ImportFunction 
       Properties:
         DefinitionUri: statemachine/CABulkUpload.asl.json
+        DefinitionSubstitutions:
+          ImportFunctionArn: !GetAtt ImportFunction.Arn
+          StateMachineSNSTopicArn: !Ref StateMachineSNSTopic
         Tracing:
           Enabled: true
         Events:

@@ -3,10 +3,6 @@ import csv
 import boto3
 from itertools import islice
 
-from aws_lambda_powertools.utilities.validation import validate
-from aws_lambda_powertools.utilities.validation.exceptions import SchemaValidationError
-import schemas
-
 maxvod = 1000 # limit import rows per https://docs.aws.amazon.com/mediatailor/latest/ug/quotas.html
 
 s3 = boto3.client('s3')
