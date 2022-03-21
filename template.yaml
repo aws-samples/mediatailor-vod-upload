@@ -52,7 +52,7 @@ Resources:
                   }
                 }
         Logging:
-          Level: ERROR
+          Level: ALL
           Destinations:
            - CloudWatchLogsLogGroup:
               LogGroupArn: !GetAtt CloudWatchLogsLogGroup.Arn
@@ -141,7 +141,7 @@ Resources:
                   }
                 ]
               },
-              "Action": "sts:AssumeRole"
+              "Action": "sts:AssumeRole",
             }
           ]
         },
@@ -153,9 +153,7 @@ Resources:
               "Statement": [
                 {
                   "Effect": "Allow",
-                  "Resource": [
-                    "*"
-                  ],
+                  "Resource": !Ref StateMachineSNSTopic ,
                   "Action": [
                     "sns:CreateTopic",
                     "sns:Publish",
@@ -174,9 +172,7 @@ Resources:
                   "Action": [
                     "lambda:InvokeFunction"
                   ],
-                  "Resource": [
-                    "*"
-                  ]
+                  "Resource": !GetAtt ImportFunction.Arn
                 }
               ]
             }
