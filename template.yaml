@@ -30,7 +30,6 @@ Resources:
 
     StateMachineCABulkUpload:
       Type: AWS::Serverless::StateMachine
-      DependsOn: ImportFunction 
       Properties:
         DefinitionUri: statemachine/CABulkUpload.asl.json
         DefinitionSubstitutions:
@@ -214,13 +213,15 @@ Resources:
     CloudWatchLogsLogGroup:
       Type: AWS::Logs::LogGroup
 
+    
     StateMachineSNSTopic: 
       Type: AWS::SNS::Topic
-
-    
+      Properties:
+        Subscription:
+          - Endpoint: !Ref SNSEndpoint
+            Protocol: email   
 
 Outputs:
-
     SourceBucketName:
         Description: S3 Bucket to upload CSV file
         Value: !Ref SourceBucket
