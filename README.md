@@ -1,6 +1,6 @@
 # AWS MediaTailor VOD Source bulk uploads
 
-<em>This demo workflow automates adding VOD sources to [AWS MediaTailor](https://aws.amazon.com/mediatailor/) Channel Assembly. Further details will be published in a future AWS Media blog post </em>
+<em>This demo workflow automates adding VOD sources to [AWS MediaTailor](https://aws.amazon.com/mediatailor/) Channel Assembly. Further details are available at this [AWS Media blog post](https://aws.amazon.com/blogs/media/automating-vod-sources-for-aws-elemental-mediatailor/) </em>
 
 The AWS Serverless Application Model ([SAM](https://aws.amazon.com/serverless/sam/)) template deploys an [Amazon S3](https://aws.amazon.com/s3/) bucket that publishes events to [Amazon EventBridge](https://aws.amazon.com/eventbridge/) which triggers an [AWS Step Function](https://aws.amazon.com/step-functions). This includes an [AWS Lambda](https://aws.amazon.com/lambda/) function with Python code that converts CSV to JSON. Template includes the [AWS IAM](https://aws.amazon.com/iam/) policies required to run the application, but is not ready for production workloads.
 
